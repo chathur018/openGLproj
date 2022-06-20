@@ -14,6 +14,10 @@
 #include "shader.h"
 #include "texture.h"
 
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+
+
 int main(void)
 {
     GLFWwindow* window;
@@ -23,7 +27,7 @@ int main(void)
         return -1;
 
     /* Create a windowed mode window and its OpenGL context */
-    window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
+    window = glfwCreateWindow(960, 540, "Hello World", NULL, NULL);
     if (!window)
     {
         glfwTerminate();
@@ -42,10 +46,10 @@ int main(void)
 
     {
         float positions[] = {
-            -0.5f, -0.5f, 0.0f, 0.0f,
-             0.5f, -0.5f, 1.0f, 0.0f,
-             0.5f,  0.5f, 1.0f, 1.0f,
-            -0.5f,  0.5f, 0.0f, 1.0f
+            100.0f, 100.0f, 0.0f, 0.0f,
+            200.0f, 100.0f, 1.0f, 0.0f,
+            200.0f, 200.0f, 1.0f, 1.0f,
+            100.0f, 200.0f, 0.0f, 1.0f
         };
 
         unsigned int indices[] = {
@@ -65,11 +69,18 @@ int main(void)
 
         indexBuffer ib(indices, 6);
 
+        glm::mat4 proj = glm::ortho(0.0f, 960.0f, 0.0f, 540.0f, -1.0f, 1.0f);
+        glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(-100, 0, 0));
+        glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(200, 200, 0));
+
+        glm::mat4 mvp = proj * view * model;
+
         shader shader("res/shaders/basic.shader");
         shader.bind();
         shader.setUniform4f("u_Color", 0.8f, 0.3f, 0.8f, 1.0f);
+        shader.setUniformMat4f("u_MVP", mvp);
 
-        texture texture("res/textures/donut.png");
+        texture texture("res/textures/logo.png");
         texture.bind();
         shader.setUniform1i("u_Texture", 0);
 
