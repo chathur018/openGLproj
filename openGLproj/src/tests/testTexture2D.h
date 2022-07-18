@@ -23,6 +23,8 @@ namespace test
 		
 		glm::vec3 m_translationA;
 		glm::vec3 m_translationB;
+		float m_rotationA;
+		float m_rotationB;
 	
 	public:
 		testTexture2D();

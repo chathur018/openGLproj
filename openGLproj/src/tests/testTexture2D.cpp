@@ -8,6 +8,7 @@ namespace test
 {
 	testTexture2D::testTexture2D()
         : m_translationA(200, 200, 0), m_translationB(400, 400, 0),
+        m_rotationA(0), m_rotationB(0),
         m_shader("res/shaders/basic.shader"), m_texture("res/textures/logo.png")
 	{
         float positions[] = {
@@ -58,14 +59,13 @@ namespace test
 		GLCall(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
 		GLCall(glClear(GL_COLOR_BUFFER_BIT));
 
-        
-
         renderer renderer;
 
         m_texture.bind();
 
         {
             glm::mat4 model = glm::translate(glm::mat4(1.0f), m_translationA);
+            model = glm::rotate(model, glm::radians(m_rotationA), glm::vec3(0.0f, 0.0f, 1.0f));
             glm::mat4 mvp = m_proj * m_view * model;
             m_shader.setUniformMat4f("u_MVP", mvp);
             renderer.draw(*m_vao, *m_ibo, m_shader);
@@ -73,6 +73,7 @@ namespace test
 
         {
             glm::mat4 model = glm::translate(glm::mat4(1.0f), m_translationB);
+            model = glm::rotate(model, glm::radians(m_rotationB), glm::vec3(0.0f, 0.0f, 1.0f));
             glm::mat4 mvp = m_proj * m_view * model;
             m_shader.setUniformMat4f("u_MVP", mvp);
             renderer.draw(*m_vao, *m_ibo, m_shader);
@@ -82,7 +83,9 @@ namespace test
 	void testTexture2D::onImGuiRender()
 	{
         ImGui::SliderFloat3("translation A", &m_translationA.x, 0.0f, 960.0f);
+        ImGui::SliderFloat("rotation A", &m_rotationA, 0.0f, 360.0f);
         ImGui::SliderFloat3("translation B", &m_translationB.x, 0.0f, 960.0f);
+        ImGui::SliderFloat("rotation B", &m_rotationB, 0.0f, 360.0f);
         ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 	}
 }
